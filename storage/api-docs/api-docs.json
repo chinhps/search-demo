@@ -1,0 +1,23 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Measurement search rankings",
+        "description": "API documentation for my application.",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/measurement": {
+            "post": {
+                "operationId": "b7f78312a1962881aa854cfce61bd7c5",
+                "responses": {
+                    "200": {
+                        "description": "AOK"
+                    },
+                    "401": {
+                        "description": "Not allowed"
+                    }
+                }
+            }
+        }
+    }
+}
