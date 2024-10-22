@@ -22,7 +22,21 @@ class MeasureRegisterRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            //
+            "url_target"        => ["required", "url"],
+            "keywords"          => ["required", "array", "max:5"],
+            "keywords.*"        => ["required", "string"]
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            "url_target.required"   => "Bạn cần phải nhập URL!",
+            "url_target.url"        => "URL chưa đúng định dạng! Kiểm tra lại!",
+            "keywords.required"     => "Bạn cần phải nhập keywords",
+            "keywords.max"          => "Bạn chỉ có thể nhập tối đa 5 keywords",
+            "keywords.*.string"     => "Keyword của bạn phải là 1 chuỗi",
+            "keywords.*.required"   => "Có dòng keyword không có chữ"
         ];
     }
 }

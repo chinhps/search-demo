@@ -18,6 +18,19 @@
                     }
                 }
             }
+        },
+        "/api/v1/measurement/result": {
+            "get": {
+                "operationId": "cf24273ff643393c282b84c68723a87f",
+                "responses": {
+                    "200": {
+                        "description": "AOK"
+                    },
+                    "401": {
+                        "description": "Not allowed"
+                    }
+                }
+            }
         }
     }
 }

@@ -7,19 +7,18 @@ use App\Modules\Measurements\Services\YahooJapanSearchService;
 
 class SearchModule
 {
-
     public function __construct(
         protected GoogleSearchService $googleSearchService,
         protected YahooJapanSearchService $yahooJapanSearchService,
     ) {}
 
-    public function google()
+    public function google(string $keyword, string $urlTarget): array
     {
-        return $this->googleSearchService->search();
+        return $this->googleSearchService->search($keyword, $urlTarget);
     }
 
-    public function yahooJapan()
+    public function yahooJapan(string $keyword, string $urlTarget): array
     {
-        return $this->yahooJapanSearchService->search();
+        return $this->yahooJapanSearchService->search($keyword, $urlTarget);
     }
 }

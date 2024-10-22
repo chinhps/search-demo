@@ -4,6 +4,7 @@ namespace App\Http\Controllers\v1\Measurement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\Measurement\MeasureRegisterRequest;
+use App\Http\Resources\v1\Measurement\MeasureResultResource;
 use App\Modules\Measurements\SearchModule;
 use OpenApi\Attributes as OA;
 
@@ -26,6 +27,10 @@ class MeasurementController extends Controller
         MeasureRegisterRequest $request
     ) {
         $validated = $request->validated();
-        return $this->searchModule->google();
     }
+
+    #[OA\Get(path: '/api/v1/measurement/result')]
+    #[OA\Response(response: 200, description: 'AOK')]
+    #[OA\Response(response: 401, description: 'Not allowed')]
+    public function resultRetrieval() {}
 }
