@@ -59,6 +59,18 @@ return [
             'level' => env('LOG_LEVEL', 'debug'),
         ],
 
+        'registerMeasurement' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/registerMeasurement.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
+
+        'searchEngine' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/searchEngine.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],

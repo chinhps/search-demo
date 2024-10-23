@@ -45,6 +45,8 @@ class MeasurementSeachYahooJpJob implements ShouldQueue
             "results_counter"   => $result['totalResults'],
             "retrieved_at"      => Carbon::now()
         ];
+
+        // insert to database
         $measurementRankingRepository->createRank(
             attributes: $attributes,
             rankSource: $source,
@@ -55,5 +57,6 @@ class MeasurementSeachYahooJpJob implements ShouldQueue
     public function failed(?Throwable $exception): void
     {
         Log::channel("queueSearch")->info($exception->getMessage());
+        // push error to dev use slack, telegram,...
     }
 }

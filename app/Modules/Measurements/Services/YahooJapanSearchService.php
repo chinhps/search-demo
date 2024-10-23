@@ -4,6 +4,7 @@ namespace App\Modules\Measurements\Services;
 
 use App\Modules\Measurements\Contracts\SearchServiceInterface;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class YahooJapanSearchService implements SearchServiceInterface
 {
@@ -27,17 +28,29 @@ class YahooJapanSearchService implements SearchServiceInterface
 
         // Loop to get data of page
         for ($i = 1; $i <= $maxPage; $i++) {
+            // Page like page1: 10, page2: 11, page3: 21,...
+            $page = ($i - 1) * 10 + 1;
+
             // Use YahooJp search
             $response = Http::withHeaders([
                 "user-agent" => YahooJapanSearchServiceHelper::randomUserAgent()
             ])->get($this->URL, [
                 ...$payload,
-                "b" => ($i - 1) * 10 + 1 // page1: 10, page2: 11, page3: 21,...
+                "b" => $page
             ])->body();
 
             // Get next data in source html
             $nextData = YahooJapanSearchServiceHelper::getNextDataWithRegex($response);
             $data = YahooJapanSearchServiceHelper::getData($nextData);
+
+            // Log results
+            Log::channel("searchEngine")->debug(json_encode([
+                "keyword"   => $keyword,
+                "urlTarget" => $urlTarget,
+                "page"      => $page,
+                "data"      => $data
+            ]));
+
             $result['totalResults'] = $data['totalResults'];
             // dont have results
             if ($top > $result['totalResults'] || !isset($data['items'])) {

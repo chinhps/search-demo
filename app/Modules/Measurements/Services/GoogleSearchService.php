@@ -4,6 +4,7 @@ namespace App\Modules\Measurements\Services;
 
 use App\Modules\Measurements\Contracts\SearchServiceInterface;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class GoogleSearchService implements SearchServiceInterface
 {
@@ -14,7 +15,7 @@ class GoogleSearchService implements SearchServiceInterface
         $top = 20;
         // Google console api get only 10 results for one page
         $maxPage = ceil($top / 10);
-        
+
         // Query params
         $payload = [
             "q"             => $keyword, // Keyword
@@ -29,11 +30,21 @@ class GoogleSearchService implements SearchServiceInterface
 
         // Loop to get data of page
         for ($i = 1; $i <= $maxPage; $i++) {
+            // Page like page1: 10, page2: 11, page3: 21,...
+            $page = ($i - 1) * 10 + 1;
             // Use google console api
             $response = Http::get($this->URL, [
                 ...$payload,
-                "start" => ($i - 1) * 10 + 1 // page1: 10, page2: 11, page3: 21,...
+                "start" => $page
             ])->json();
+
+            // Log results
+            Log::channel("searchEngine")->debug(json_encode([
+                "keyword"   => $keyword,
+                "urlTarget" => $urlTarget,
+                "page"      => $page,
+                "data"      => $response
+            ]));
 
             // Get total results
             $result['totalResults'] = (int)$response["searchInformation"]["totalResults"] ?? 0;
@@ -50,7 +61,7 @@ class GoogleSearchService implements SearchServiceInterface
                 $domainTarget = parse_url($urlTarget, PHP_URL_HOST);
                 $clearDomainTarget = preg_replace("/^www\./", "", $domainTarget);
                 $clearDomainCurrent = preg_replace("/^www\./", "", $item['displayLink']);
-                
+
                 // Check 2 domains
                 if ($clearDomainTarget == $clearDomainCurrent) {
                     $result["top"] = ($key + 1) + ($i > 1 ? ($i - 1) * 10 : 0);
