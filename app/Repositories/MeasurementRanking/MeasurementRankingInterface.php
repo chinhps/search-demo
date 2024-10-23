@@ -8,5 +8,13 @@ use App\Repositories\RepositoryInterface;
 
 interface MeasurementRankingInterface extends RepositoryInterface
 {
-    public function createRank($attributes = [], RankingSource $rankSource, MeasurementKeyword $measurementKeyword);
+    /**
+     * createRank
+     *
+     * @param  array $attributes
+     * @param  RankingSource $rankSource
+     * @param  MeasurementKeyword $measurementKeyword
+     * @return MeasurementRanking
+     */
+    public function createRank(array $attributes = [], RankingSource $rankSource, MeasurementKeyword $measurementKeyword);
 }

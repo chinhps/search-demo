@@ -12,6 +12,12 @@ class RankingSourceRepository extends BaseRepository implements RankingSourceInt
         parent::__construct($model);
     }
 
+    /**
+     * getSourceByName
+     *
+     * @param  string $name
+     * @return RankingSource
+     */
     public function getSourceByName(string $name)
     {
         return $this->model->where('source_name', $name)->firstOrFail();

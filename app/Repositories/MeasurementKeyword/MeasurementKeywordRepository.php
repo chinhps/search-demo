@@ -13,7 +13,14 @@ class MeasurementKeywordRepository extends BaseRepository implements Measurement
     {
         parent::__construct($model);
     }
-
+        
+    /**
+     * createKeyword
+     *
+     * @param  Collection $attributes
+     * @param  MeasurementRequest $measureRequest
+     * @return \Illuminate\Support\Collection<MeasurementKeyword>
+     */
     public function createKeyword(Collection $attributes, MeasurementRequest $measureRequest)
     {
         $keywords = $attributes->map(function ($data) use ($measureRequest) {
