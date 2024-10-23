@@ -2,9 +2,11 @@
 
 namespace App\Repositories\MeasurementKeyword;
 
+use App\Models\MeasurementRequest;
+use App\Repositories\RepositoryInterface;
+use Illuminate\Support\Collection;
 
-interface MeasurementKeywordInterface
+interface MeasurementKeywordInterface extends RepositoryInterface
 {
-    public function list(array $filter, float $paginate = 15);
-    public function updateOrInsert(?float $id, array $params);
+    public function createKeyword(Collection $attributes, MeasurementRequest $measureRequest);
 }

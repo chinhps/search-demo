@@ -52,6 +52,13 @@ return [
     */
 
     'channels' => [
+
+        'queueSearch' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/queueSearch.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],

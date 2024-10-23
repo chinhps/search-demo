@@ -11,6 +11,8 @@ class RankingSource extends Model
     use HasFactory;
 
     protected $table  = "ranking_sources";
+    protected $fillable = ["source_name"];
+    public $timestamps = false;
 
     public function measurementRankings(): HasMany
     {

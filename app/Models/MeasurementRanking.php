@@ -11,6 +11,8 @@ class MeasurementRanking extends Model
     use HasFactory;
 
     protected $table  = "measurement_rankings";
+    protected $fillable = ["rank", "results_counter", "retrieved_at"];
+    public $timestamps = false;
 
     public function measurementKeyword(): BelongsTo
     {

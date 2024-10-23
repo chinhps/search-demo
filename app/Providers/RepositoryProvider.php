@@ -9,6 +9,8 @@ use App\Repositories\MeasurementRanking\MeasurementRankingInterface;
 use App\Repositories\MeasurementRanking\MeasurementRankingRepository;
 use App\Repositories\MeasurementRequest\MeasurementRequestInterface;
 use App\Repositories\MeasurementRequest\MeasurementRequestRepository;
+use App\Repositories\RankingSource\RankingSourceInterface;
+use App\Repositories\RankingSource\RankingSourceRepository;
 use App\Repositories\RepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
@@ -18,7 +20,8 @@ class RepositoryProvider extends ServiceProvider
     {
         $this->app->bind(RepositoryInterface::class, BaseRepository::class);
         $this->app->bind(MeasurementRequestInterface::class, MeasurementRequestRepository::class);
-        // $this->app->bind(MeasurementRankingInterface::class, MeasurementRankingRepository::class);
-        // $this->app->bind(MeasurementKeywordInterface::class, MeasurementKeywordRepository::class);
+        $this->app->bind(MeasurementRankingInterface::class, MeasurementRankingRepository::class);
+        $this->app->bind(MeasurementKeywordInterface::class, MeasurementKeywordRepository::class);
+        $this->app->bind(RankingSourceInterface::class, RankingSourceRepository::class);
     }
 }

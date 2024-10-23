@@ -2,9 +2,11 @@
 
 namespace App\Repositories\MeasurementRanking;
 
+use App\Models\MeasurementKeyword;
+use App\Models\RankingSource;
+use App\Repositories\RepositoryInterface;
 
-interface MeasurementRankingInterface
+interface MeasurementRankingInterface extends RepositoryInterface
 {
-    public function list(array $filter, float $paginate = 15);
-    public function updateOrInsert(?float $id, array $params);
+    public function createRank($attributes = [], RankingSource $rankSource, MeasurementKeyword $measurementKeyword);
 }

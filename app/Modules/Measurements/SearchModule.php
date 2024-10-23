@@ -12,11 +12,29 @@ class SearchModule
         protected YahooJapanSearchService $yahooJapanSearchService,
     ) {}
 
+    /**
+     * google
+     *
+     * @param string $keyword
+     * @param string $urlTarget
+     * @return array
+     * - number|null totalResults: results counter
+     * - number|null top: top in results
+     */
     public function google(string $keyword, string $urlTarget): array
     {
         return $this->googleSearchService->search($keyword, $urlTarget);
     }
 
+    /**
+     * yahooJapan
+     *
+     * @param string $keyword
+     * @param string $urlTarget
+     * @return array
+     * - number|null totalResults: results counter
+     * - number|null top: top in results
+     */
     public function yahooJapan(string $keyword, string $urlTarget): array
     {
         return $this->yahooJapanSearchService->search($keyword, $urlTarget);

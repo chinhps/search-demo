@@ -12,6 +12,8 @@ class MeasurementKeyword extends Model
     use HasFactory;
 
     protected $table  = "measurement_keywords";
+    protected $fillable = ["keyword"];
+    public $timestamps = false;
 
     public function measurementRequest(): BelongsTo
     {
