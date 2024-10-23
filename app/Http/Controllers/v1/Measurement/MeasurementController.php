@@ -11,12 +11,10 @@ use App\Jobs\MeasurementSeachYahooJpJob;
 use App\Modules\Measurements\SearchModule;
 use App\Repositories\MeasurementKeyword\MeasurementKeywordInterface;
 use App\Repositories\MeasurementRequest\MeasurementRequestInterface;
-use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use OpenApi\Attributes as OA;
-use Throwable;
 
 use function App\Helper\getUserIP;
 
@@ -145,6 +143,11 @@ class MeasurementController extends Controller
             // Job list
             $jobs = [];
             foreach ($measurementKeywords as $measurementKeyword) {
+
+                // If a space is inserted, it becomes an AND search
+                // In google + yahoo you can search AND with keyword "AND"
+                $keyword = str_replace(" ", "AND", $measurementKeyword);
+
                 $jobs[] = new MeasurementSeachGoogleJob($measurementKeyword, $url);
                 $jobs[] = new MeasurementSeachYahooJpJob($measurementKeyword, $url);
             }
