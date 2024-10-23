@@ -19,7 +19,7 @@ class MeasurementRanking extends Model
         return $this->belongsTo(MeasurementKeyword::class, "measurement_keyword_id");
     }
 
-    public function rankingSoure(): BelongsTo
+    public function rankingSource(): BelongsTo
     {
         return $this->belongsTo(RankingSource::class, "ranking_source_id");
     }

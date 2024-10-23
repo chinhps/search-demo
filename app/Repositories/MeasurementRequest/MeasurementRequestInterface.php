@@ -6,5 +6,6 @@ use App\Repositories\RepositoryInterface;
 
 interface MeasurementRequestInterface extends RepositoryInterface
 {
-    public function listFilter(array $filter, float $paginate = 15);
+    public function getListKeywordByIP(float $id, string $ip);
+    public function listFilter(array $filter = [], float $paginate = 15);
 }

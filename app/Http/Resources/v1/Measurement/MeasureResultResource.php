@@ -2,10 +2,10 @@
 
 namespace App\Http\Resources\v1\Measurement;
 
+use App\Http\Resources\BaseResource;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
-class MeasureResultResource extends JsonResource
+class MeasureResultResource extends BaseResource
 {
     /**
      * Transform the resource into an array.
@@ -14,6 +14,20 @@ class MeasureResultResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        $data = $this->measurementKeywords->map(function ($keyword) {
+            return [
+                "id"        => $keyword->id,
+                "keyword"   => $keyword->keyword,
+                "results"   => $keyword->measurementRankings->map(function ($result) {
+                    return [
+                        "rank"              => $result->rank,
+                        "results_counter"   => $result->results_counter,
+                        "ranking_source"     => $result->rankingSource->source_name,
+
+                    ];
+                })
+            ];
+        });
+        return $data->toArray();
     }
 }

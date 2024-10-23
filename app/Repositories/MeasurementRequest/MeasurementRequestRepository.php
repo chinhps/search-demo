@@ -13,5 +13,17 @@ class MeasurementRequestRepository extends BaseRepository implements Measurement
         parent::__construct($model);
     }
 
-    public function listFilter(array $filter, float $paginate = 15) {}
+    public function listFilter(array $filter = [], float $paginate = 15)
+    {
+        return $this->model->where($filter)->paginate($paginate);
+    }
+
+    public function getListKeywordByIP(float $id, string $ip)
+    {
+        $model = $this->model
+            ->with('measurementKeywords.measurementRankings.rankingSource')
+            ->where('ip', $ip)
+            ->findOrFail($id);
+        return $model;
+    }
 }

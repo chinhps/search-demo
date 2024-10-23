@@ -4,6 +4,7 @@ namespace App\Http\Controllers\v1\Measurement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\Measurement\MeasureRegisterRequest;
+use App\Http\Resources\v1\Measurement\MeasurementRequestsResource;
 use App\Http\Resources\v1\Measurement\MeasureResultResource;
 use App\Jobs\MeasurementSeachGoogleJob;
 use App\Jobs\MeasurementSeachYahooJpJob;
@@ -90,11 +91,45 @@ class MeasurementController extends Controller
         }
     }
 
-    #[OA\Get(path: '/api/v1/measurement/result')]
+    #[OA\Get(path: '/api/v1/measurement')]
     #[OA\Response(response: 200, description: 'AOK')]
     #[OA\Response(response: 401, description: 'Not allowed')]
     public function resultRetrieval()
     {
-        return 123;
+        // Get current ip
+        $ip = getUserIP();
+        // paginate
+        $paginate = 15;
+        // return data by ip user
+        $data = $this->measurementRequestRepository->listFilter([
+            ["ip", $ip]
+        ], $paginate);
+        return MeasurementRequestsResource::collection($data);
+    }
+
+    #[OA\Get(path: '/api/v1/measurement/{id}')]
+    #[OA\Response(response: 200, description: 'AOK')]
+    #[OA\Response(response: 401, description: 'Not allowed')]
+    public function resultDetail($id)
+    {
+        try {
+            // Get current ip
+            $ip = getUserIP();
+            // get data by ip user
+            $data = $this->measurementRequestRepository->getListKeywordByIP(id: $id, ip: $ip);
+            return new MeasureResultResource($data);
+        } catch (\Exception $e) {
+            // log error
+            Log::error(json_encode([
+                "f"         => "resultDetail",
+                "message"   => $e->getMessage(),
+            ]));
+            // push error to dev use slack, telegram,...
+
+            return $this->responseError(
+                message: "Không tồn tại kết quả! Vui lòng thử lại!",
+                status: 400
+            );
+        }
     }
 }

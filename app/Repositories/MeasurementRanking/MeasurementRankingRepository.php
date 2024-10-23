@@ -26,7 +26,7 @@ class MeasurementRankingRepository extends BaseRepository implements Measurement
     public function createRank(array $attributes = [], RankingSource $rankSource, MeasurementKeyword $measurementKeyword)
     {
         $rank = new $this->model($attributes);
-        $rank->rankingSoure()->associate($rankSource);
+        $rank->rankingSource()->associate($rankSource);
         $rank->measurementKeyword()->associate($measurementKeyword);
         $rank->save();
         return $rank;
