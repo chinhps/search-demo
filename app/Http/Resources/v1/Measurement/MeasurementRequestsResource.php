@@ -19,7 +19,8 @@ class MeasurementRequestsResource extends BaseResource
         return [
             "id"                => $this->id,
             "url"               => $this->url,
-            "status"            => $this->measurementRequestStatus($this->status),
+            "status_name"       => $this->measurementRequestStatus($this->status),
+            "status"            => $this->status,
             "created_at"        => $this->created_at
         ];
     }

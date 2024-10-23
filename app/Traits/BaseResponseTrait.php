@@ -21,6 +21,6 @@ trait BaseResponseTrait
             'error' => true,
             'message' => $message,
             'data' => $data,
-        ], 200);
+        ], $status); // 200
     }
 }
