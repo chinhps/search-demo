@@ -11,6 +11,7 @@ use App\Modules\Measurements\SearchModule;
 use App\Repositories\MeasurementKeyword\MeasurementKeywordInterface;
 use App\Repositories\MeasurementRequest\MeasurementRequestInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use OpenApi\Attributes as OA;
 
 use function App\Helper\getUserIP;
@@ -35,6 +36,7 @@ class MeasurementController extends Controller
     public function register(
         MeasureRegisterRequest $request
     ) {
+        // Validated
         $validated = $request->validated();
 
         $url = $validated['url_target'];
@@ -42,30 +44,49 @@ class MeasurementController extends Controller
 
         try {
             DB::beginTransaction();
+
+            // Insert measurement request
             $measurementRequest = $this->measurementRequestRepository->create([
                 "url" => $url,
                 "status" => 0,
                 "ip" => getUserIP(),
             ]);
 
+            // format data keywords
             $formatKeywords = collect($keywords)->map(
                 fn(string $keyword) => ["keyword" => $keyword]
             );
+            // Insert keywords
             $measurementKeywords = $this->measurementKeywordRepository->createKeyword(
                 attributes: $formatKeywords,
                 measureRequest: $measurementRequest
             );
 
-            foreach($measurementKeywords as $measurementKeyword) {
+            // Push job to queue
+            foreach ($measurementKeywords as $measurementKeyword) {
                 MeasurementSeachGoogleJob::dispatch($measurementKeyword, $url);
                 MeasurementSeachYahooJpJob::dispatch($measurementKeyword, $url);
             }
 
             DB::commit();
-            return 123;
+            return $this->responseSuccess(
+                message: "Thao tác thành công!",
+                status: 200
+            );
         } catch (\Exception $e) {
             DB::rollBack();
-            dd($e->getMessage());
+            // log error
+            Log::channel("registerMeasurement")->error(json_encode([
+                "message"   => $e->getMessage(),
+                "url"       => $url,
+                "keywords"  => $keywords
+            ]));
+            // push error to dev use slack, telegram,...
+
+            return $this->responseError(
+                message: "Có lỗi gì đó trong quá trình xử lý! Vui lòng thử lại!",
+                status: 400
+            );
         }
     }
 
