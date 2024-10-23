@@ -7,6 +7,7 @@ use App\Modules\Measurements\SearchModule;
 use App\Repositories\MeasurementRanking\MeasurementRankingInterface;
 use App\Repositories\RankingSource\RankingSourceInterface;
 use Carbon\Carbon;
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -17,7 +18,7 @@ use Throwable;
 
 class MeasurementSeachGoogleJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * Create a new job instance.
@@ -35,6 +36,12 @@ class MeasurementSeachGoogleJob implements ShouldQueue
         RankingSourceInterface $rankingSourceRepository,
         MeasurementRankingInterface $measurementRankingRepository
     ): void {
+
+        // cancel if have fail job
+        if ($this->batch()->cancelled()) {
+            return;
+        }
+
         // get data in api
         $result = $searchModule->google($this->measurementKeyword->keyword, $this->urlTarget);
         $source = $rankingSourceRepository->getSourceByName("Google");

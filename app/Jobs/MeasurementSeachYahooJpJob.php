@@ -12,12 +12,13 @@ use Illuminate\Queue\SerializesModels;
 use App\Models\MeasurementKeyword;
 use Illuminate\Bus\Queueable;
 use Carbon\Carbon;
+use Illuminate\Bus\Batchable;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class MeasurementSeachYahooJpJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * Create a new job instance.
@@ -35,6 +36,12 @@ class MeasurementSeachYahooJpJob implements ShouldQueue
         RankingSourceInterface $rankingSourceRepository,
         MeasurementRankingInterface $measurementRankingRepository
     ): void {
+
+        // cancel if have fail job
+        if ($this->batch()->cancelled()) {
+            return;
+        }
+
         // get data in api
         $result = $searchModule->yahooJapan($this->measurementKeyword->keyword, $this->urlTarget);
         $source = $rankingSourceRepository->getSourceByName("YahooJp");

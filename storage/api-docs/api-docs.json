@@ -7,30 +7,311 @@
     },
     "paths": {
         "/api/v1/measurement": {
-            "post": {
-                "operationId": "b7f78312a1962881aa854cfce61bd7c5",
+            "get": {
+                "tags": [
+                    "results measurement"
+                ],
+                "summary": "List measurement request by your IP",
+                "description": "List measurement request by your IP",
+                "operationId": "77e22d399f592e6ee81b10a54784a791",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "AOK"
+                        "description": "Response with status: 1: success, 0: pending, 2: error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ListMeasurementRequest"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "register measurement"
+                ],
+                "summary": "Register url for measurement search",
+                "description": "Register and push to queue",
+                "operationId": "b7f78312a1962881aa854cfce61bd7c5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "url_target": {
+                                        "description": "Url website (Exact match for top domain)",
+                                        "type": "string",
+                                        "example": "https://chinhdev.com"
+                                    },
+                                    "keywords": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "example": "Allgrow-labo"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Thao tác thành công!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
-                    "401": {
-                        "description": "Not allowed"
+                    "400": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 400
+                                        },
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Có lỗi gì đó trong quá trình xử lý! Vui lòng thử lại!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "msg": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Bạn cần phải nhập keywords"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
         },
-        "/api/v1/measurement/result": {
+        "/api/v1/measurement/{id}": {
             "get": {
-                "operationId": "cf24273ff643393c282b84c68723a87f",
+                "tags": [
+                    "results measurement"
+                ],
+                "summary": "Get detail result",
+                "description": "Get detail result",
+                "operationId": "cdd8da8130b82606faa7d57fc619bd64",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID get in list measurement",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "AOK"
-                    },
-                    "401": {
-                        "description": "Not allowed"
+                        "description": "Result counter in search engine and Top",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/measurementDetailResponse"
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-    }
+    },
+    "components": {
+        "schemas": {
+            "ItemMeasurementRequest": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "url": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "integer"
+                    },
+                    "status_name": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "ItemPaginate": {
+                "properties": {
+                    "current_page": {
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "ListMeasurementRequest": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ItemMeasurementRequest"
+                        }
+                    },
+                    "paginate": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ItemPaginate"
+                        }
+                    }
+                },
+                "type": "object",
+                "example": {
+                    "data": [
+                        {
+                            "id": 4,
+                            "url": "https://chinhdev.com",
+                            "status_name": "Đang xử lý",
+                            "status": 0,
+                            "created_at": "2024-10-23T04:54:58.000000Z"
+                        },
+                        {
+                            "id": 5,
+                            "url": "https://allgrow-labo.jp/",
+                            "status_name": "Đã hoàn thành",
+                            "status": 1,
+                            "created_at": "2024-10-23T04:54:58.000000Z"
+                        }
+                    ],
+                    "paginate": {
+                        "current_page": 1,
+                        "last_page": 1,
+                        "total": 10
+                    }
+                }
+            },
+            "DetailItem": {
+                "properties": {
+                    "rank": {
+                        "type": "number",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "results_counter": {
+                        "type": "number",
+                        "example": 9820
+                    },
+                    "ranking_source": {
+                        "type": "string",
+                        "example": "YahooJp"
+                    }
+                },
+                "type": "object"
+            },
+            "measurementDetailResponse": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "number",
+                                    "example": 1
+                                },
+                                "keyword": {
+                                    "type": "string",
+                                    "example": "Allgrow-labo"
+                                },
+                                "results": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/DetailItem"
+                                    }
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "register measurement",
+            "description": "register measurement"
+        },
+        {
+            "name": "results measurement",
+            "description": "results measurement"
+        }
+    ]
 }

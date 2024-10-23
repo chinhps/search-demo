@@ -11,9 +11,12 @@ use App\Jobs\MeasurementSeachYahooJpJob;
 use App\Modules\Measurements\SearchModule;
 use App\Repositories\MeasurementKeyword\MeasurementKeywordInterface;
 use App\Repositories\MeasurementRequest\MeasurementRequestInterface;
+use Illuminate\Bus\Batch;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use OpenApi\Attributes as OA;
+use Throwable;
 
 use function App\Helper\getUserIP;
 
@@ -139,11 +142,18 @@ class MeasurementController extends Controller
                 measureRequest: $measurementRequest
             );
 
-            // Push job to queue
+            // Job list
+            $jobs = [];
             foreach ($measurementKeywords as $measurementKeyword) {
-                MeasurementSeachGoogleJob::dispatch($measurementKeyword, $url);
-                MeasurementSeachYahooJpJob::dispatch($measurementKeyword, $url);
+                $jobs[] = new MeasurementSeachGoogleJob($measurementKeyword, $url);
+                $jobs[] = new MeasurementSeachYahooJpJob($measurementKeyword, $url);
             }
+            // Push job to queue and use batch
+            Bus::batch($jobs)->then(function () use ($measurementRequest) {
+                $measurementRequest->update(['status' => 1]);
+            })->catch(function () use ($measurementRequest) {
+                $measurementRequest->update(['status' => 2]);
+            })->dispatch();
 
             DB::commit();
             return $this->responseSuccess(
